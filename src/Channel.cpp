@@ -1,5 +1,11 @@
 #include "Channel.h"
-#include"EventLoop.h"
+#include "EventLoop.h"
+
+#include<utility>
+
+const short Channel::READ_EVENT = 1;
+const short Channel::WRITE_EVENT = 2;
+const short Channel::ET = 4;
 
 Channel::Channel(int fd, EventLoop* loop) : fd_(fd), loop_(loop), listen_events_(0), ready_events_(0), exist_(false)
 {
@@ -28,7 +34,7 @@ void Channel::EnableRead()
 
 void Channel::EnableWrite()
 {
-	listen_events_ != WRITE_EVENT;
+	listen_events_ |= WRITE_EVENT;
 	//loop_->UpdateChannel(this);
 }
 
