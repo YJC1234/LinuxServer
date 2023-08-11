@@ -12,9 +12,24 @@ public:
 	void EnableRead();
 	void EnableWrite();
 
+	int fd();
+	short listen_events() const;
+	short ready_events() const;
+	bool exist() const;
+	void set_Exist(bool in = true);
+	void EnableET();
+
+	void set_ready_events(short ev);
+	void set_read_callback(std::function<void()> const& callback);
+	void set_write_callback(std::function<void()> const& callback);
+
+	static const short READ_EVENT;
+	static const short WRITE_EVENT;
+	static const short ET;
+
 private:
 	int fd_;
-	EventLoop* loop;
+	EventLoop* loop_;
 	short listen_events_;
 	short ready_events_;
 	bool exist_;
