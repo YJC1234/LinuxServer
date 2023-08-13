@@ -13,7 +13,7 @@ Channel::Channel(int fd, EventLoop* loop) : fd_(fd), loop_(loop), listen_events_
 
 Channel::~Channel()
 {
-	//loop_->DeleteChannel(this);
+	loop_->DeleteChannel(this);
 }
 
 void Channel::HandleEvent() const
@@ -29,13 +29,13 @@ void Channel::HandleEvent() const
 void Channel::EnableRead()
 {
 	listen_events_ |= READ_EVENT;
-	//loop_->UpdateChannel(this);
+	loop_->UpdateChannel(this);
 }
 
 void Channel::EnableWrite()
 {
 	listen_events_ |= WRITE_EVENT;
-	//loop_->UpdateChannel(this);
+	loop_->UpdateChannel(this);
 }
 
 int Channel::fd() {
@@ -61,7 +61,7 @@ void Channel::set_Exist(bool in) {
 void Channel::EnableET()
 {
 	listen_events_ |= ET;
-	//loop_->UpdateChannel(this);
+	loop_->UpdateChannel(this);
 }
 
 void Channel::set_ready_events(short ev)
