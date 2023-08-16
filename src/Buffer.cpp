@@ -22,8 +22,8 @@ size_t Buffer::size() const
 
 void Buffer::Append(const char* _str, int _size)
 {
-	for (int i = 0; i < size; i++) {
-		if (_str[i] = '/0') {
+	for (int i = 0; i < _size; i++) {
+		if (_str[i] == '\0') {
 			break;
 		}
 		buf_.push_back(_str[i]);
@@ -34,4 +34,3 @@ void Buffer::Clear()
 {
 	buf_.clear();
 }
-

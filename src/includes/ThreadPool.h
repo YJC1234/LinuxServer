@@ -39,11 +39,11 @@ auto ThreadPool::Add(F&& f, Args&& ...args) {
 
 	std::future<return_type> res = task->get_future();
 	{//иокЬ
-		std::unique_lock<mutex> lock(queue_mutex_);
+		std::unique_lock<std::mutex> lock(queue_mutex_);
 		if (stop_) {
 			throw std::runtime_error("enqueue on stopped ThreadPool");
 		}
-		tasks_.emplace_back([task]() {(*task)(); });
+		tasks_.emplace([task]() { (*task)(); });
 	}
 	condition_variable_.notify_one();
 	return res;

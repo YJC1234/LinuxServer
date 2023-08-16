@@ -29,7 +29,7 @@ TcpServer::~TcpServer()
 void TcpServer::Start()
 {
 	for (ssize_t i = 0; i < sub_reactors_.size(); i++) {
-		std::function<void()> sub_loop = std::bind(&EventLoop::Loop, sub_reactors_[i]);
+		std::function<void()> sub_loop = std::bind(&EventLoop::Loop, sub_reactors_[i].get());
 		threadPool_->Add(std::move(sub_loop));
 	}
 	main_reactor_->Loop();
