@@ -17,8 +17,10 @@ public:
 
 	void set_delete_connection_(std::function<void(int)>& fn);
 	void set_send_buf(const char* str);
+	void set_on_recv(std::function<void(Connection*)> fn);
 	State state() const;
 
+	void Bussiness();
 	RC Read();
 	RC Write();
 	RC Send(std::string msg);

@@ -35,8 +35,21 @@ void Connection::set_send_buf(const char* str)
 	send_buf_->set_buf(str);
 }
 
+void Connection::set_on_recv(std::function<void(Connection*)> fn)
+{
+	on_recv_ = std::move(fn);
+	std::function<void()> cb = std::bind(&Connection::Bussiness, this);
+	channel_->set_read_callback(cb);
+}
+
 Connection::State Connection::state() const {
 	return state_;
+}
+//提前将tcp缓冲区读到read_buf_中，免得用户需要自己处理
+void Connection::Bussiness()
+{
+	Read();
+	on_recv_(this);
 }
 
 RC Connection::Read() {
