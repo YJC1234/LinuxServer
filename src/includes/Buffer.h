@@ -5,7 +5,7 @@
 class Buffer {
 public:
 	DISALLOW_COPY_AND_MOVE(Buffer);
-	Buffer() = default;	//不允许在栈上分配内存
+	Buffer() = default;
 	~Buffer() = default;
 
 	const std::string& buf() const;	//防止拷贝

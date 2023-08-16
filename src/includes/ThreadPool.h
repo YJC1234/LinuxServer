@@ -11,11 +11,11 @@
 #include<type_traits>
 #include "common.h"
 
-class ThreadPoll {
+class ThreadPool {
 public:
-	DISALLOW_COPY_AND_MOVE(ThreadPoll);
-	ThreadPoll(unsigned int size = 10);
-	~ThreadPoll();
+	DISALLOW_COPY_AND_MOVE(ThreadPool);
+	ThreadPool(unsigned int size = 10);
+	~ThreadPool();
 
 	//添加任务到队列中参数：F(Args...),返回:future<typename invoke_result<F,Args...>::type>
 	template<class F, class ...Args>
@@ -31,7 +31,7 @@ private:
 
 //不能放在cpp中，c++模板不能支持分离编译
 template<class F, class ...Args>
-auto ThreadPoll::Add(F&& f, Args&& ...args) {
+auto ThreadPool::Add(F&& f, Args&& ...args) {
 	using return_type = typename std::invoke_result_t<F, Args...>;
 
 	auto task =

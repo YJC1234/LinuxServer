@@ -15,7 +15,7 @@ Acceptor::Acceptor(EventLoop* loop)
 
 	channel_ = std::make_unique<Channel>(socket_->fd(), loop);
 	std::function<void()> cb = std::bind(&Acceptor::AcceptConnection, this);
-	channel_->set_read_callback(cb);
+	channel_->set_read_callback(cb);	//这里cb会被移动到channel_中，不能直接移动new_connection_callback_否则调用set..时会未定义
 	channel_->EnableRead();
 }
 

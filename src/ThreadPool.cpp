@@ -1,6 +1,6 @@
 #include"ThreadPool.h"
 
-ThreadPoll::ThreadPoll(unsigned int size) {
+ThreadPool::ThreadPool(unsigned int size) {
 	for (int i = 0; i < size; i++) {
 		workers_.emplace_back(std::thread([this]() {
 			while (true) {
@@ -21,7 +21,7 @@ ThreadPoll::ThreadPoll(unsigned int size) {
 	}
 }
 
-ThreadPoll::~ThreadPoll() {
+ThreadPool::~ThreadPool() {
 	{
 		std::unique_lock<std::mutex> lock(queue_mutex_);
 		stop_ = true;
