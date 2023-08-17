@@ -18,11 +18,15 @@ public:
 	void set_delete_connection_(std::function<void(int)>& fn);
 	void set_send_buf(const char* str);
 	void set_on_recv(std::function<void(Connection*)> fn);
+	void set_on_write(std::function<void(Connection*)> fn);
 	State state() const;
 	Socket* socket() const;
 	Buffer* Read_buf() const;
 
-	void Bussiness();
+	void canWrite();
+	void Bussiness_read();
+	void BUssiness_write();
+
 	RC Read();
 	RC Write();
 	RC Send(std::string msg);
@@ -45,4 +49,5 @@ private:
 
 	std::function<void(int)> delete_connection_;
 	std::function<void(Connection*)> on_recv_;
+	std::function<void(Connection*)> on_write_;
 };

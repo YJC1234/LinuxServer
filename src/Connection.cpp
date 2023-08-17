@@ -38,8 +38,15 @@ void Connection::set_send_buf(const char* str)
 void Connection::set_on_recv(std::function<void(Connection*)> fn)
 {
 	on_recv_ = std::move(fn);
-	std::function<void()> cb = std::bind(&Connection::Bussiness, this);
+	std::function<void()> cb = std::bind(&Connection::Bussiness_read, this);
 	channel_->set_read_callback(cb);
+}
+
+void Connection::set_on_write(std::function<void(Connection*)> fn)
+{
+	on_write_ = std::move(fn);
+	std::function<void()> cb = std::bind(&Connection::BUssiness_write, this);
+	channel_->set_write_callback(cb);
 }
 
 Connection::State Connection::state() const {
@@ -56,12 +63,24 @@ Buffer* Connection::Read_buf() const
 	return read_buf_.get();
 }
 
-//提前将tcp缓冲区读到read_buf_中，免得用户需要自己处理
-void Connection::Bussiness()
+void Connection::canWrite()
 {
-	Read();//可能会关闭
-	if (state_ == State::Closed) return;
+	channel_->EnableWrite();
+}
+
+//预处理 将tcp缓冲区读到read_buf_中，免得用户需要自己处理
+void Connection::Bussiness_read()
+{
+	Read();
+	if (state_ == State::Closed) return;	//可能Read之后已经关闭
 	on_recv_(this);
+}
+//预处理 把send_buf写入tcp缓冲区中
+void Connection::BUssiness_write()
+{
+	on_write_(this);
+	if (state_ == State::Closed) return;
+	Write();
 }
 
 RC Connection::Read() {
