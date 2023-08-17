@@ -45,7 +45,7 @@ RC TcpServer::NewConnection(int fd)
 	conn->set_on_recv(on_recv_);
 	connections_[fd] = std::move(conn);
 	if (on_connect_) {
-		on_connect_(conn.get());
+		on_connect_(connections_[fd].get());
 	}
 	return RC_SUCCESS;
 }

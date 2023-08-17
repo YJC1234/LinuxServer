@@ -45,10 +45,22 @@ void Connection::set_on_recv(std::function<void(Connection*)> fn)
 Connection::State Connection::state() const {
 	return state_;
 }
+
+Socket* Connection::socket() const
+{
+	return socket_.get();
+}
+
+Buffer* Connection::Read_buf() const
+{
+	return read_buf_.get();
+}
+
 //提前将tcp缓冲区读到read_buf_中，免得用户需要自己处理
 void Connection::Bussiness()
 {
-	Read();
+	Read();//可能会关闭
+	if (state_ == State::Closed) return;
 	on_recv_(this);
 }
 
@@ -78,7 +90,7 @@ RC Connection::Write() {
 		rc = WriteNonBlocking();
 	}
 	else {
-		rc = WriteNonBlocking();
+		rc = WriteBlocking();
 	}
 	send_buf_->Clear();	//发送后清空缓冲区
 	return rc;
@@ -113,6 +125,7 @@ RC Connection::ReadNonBlocking()
 			break;
 		}
 		else if (readBytes == 0) {	//客户端断开连接
+			printf("read EOF, client fd %d disconnected\n", sockfd);
 			state_ = State::Closed;
 			Close();
 			break;
@@ -157,14 +170,14 @@ RC Connection::WriteNonBlocking()
 	int data_left = data_size;	//未发送的大小
 	while (data_left > 0) {
 		ssize_t writeBytes = write(sockfd, buf + data_size - data_left, data_left);
-		if (writeBytes == 0 && errno == EINTR) {	//正常中断
+		if (writeBytes == -1 && errno == EINTR) {	//正常中断
 			printf("continue writing");
 			continue;
 		}
-		else if (writeBytes == 0 && errno == EAGAIN) {
+		else if (writeBytes == -1 && errno == EAGAIN) {
 			break;
 		}
-		else {
+		else if (writeBytes == -1) {
 			printf("Other error on client fd %d\n", sockfd);
 			state_ = State::Closed;
 			Close();
@@ -176,7 +189,7 @@ RC Connection::WriteNonBlocking()
 	return RC_SUCCESS;
 }
 
-RC Connection::WriteBlocing()
+RC Connection::WriteBlocking()
 {	//!没有处理send_buf_大于TCP缓冲区的情况
 	int sockfd = socket_->fd();
 	char buf[send_buf_->size()];

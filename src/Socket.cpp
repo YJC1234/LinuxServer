@@ -44,7 +44,7 @@ std::string Socket::get_addr() const
 
 RC Socket::Create()
 {
-	assert(fd_ != -1);
+	assert(fd_ == -1);
 	fd_ = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd_ == -1) {
 		perror("failed to create socket");

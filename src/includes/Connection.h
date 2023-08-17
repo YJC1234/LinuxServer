@@ -19,6 +19,8 @@ public:
 	void set_send_buf(const char* str);
 	void set_on_recv(std::function<void(Connection*)> fn);
 	State state() const;
+	Socket* socket() const;
+	Buffer* Read_buf() const;
 
 	void Bussiness();
 	RC Read();
@@ -31,7 +33,7 @@ private:
 	RC ReadNonBlocking();
 	RC ReadBlocking();
 	RC WriteNonBlocking();
-	RC WriteBlocing();
+	RC WriteBlocking();
 
 private:
 	std::unique_ptr<Socket> socket_;
